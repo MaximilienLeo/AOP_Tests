@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AOP_Tests {
+namespace AOP_Tests.Data.Entities {
     public class RentalAgreement {
         public Guid Id { get; set; }
         public Customer Customer { get; set; }

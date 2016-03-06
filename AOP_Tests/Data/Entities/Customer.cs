@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AOP_Tests {
+namespace AOP_Tests.Data.Entities {
     public class Customer {
         public Guid Id { get; set; }
         public string Name { get; set; }

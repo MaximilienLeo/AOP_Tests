@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A87D8160-6568-4541-8C26-0F3FEFFB1DE0}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{D6BF7AD1-8FAE-43CD-BEF4-FF2A50E4CBA7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AOP_Tests</RootNamespace>
-    <AssemblyName>AOP_Tests</AssemblyName>
+    <RootNamespace>TestUI</RootNamespace>
+    <AssemblyName>TestUI</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -40,18 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Business\ILoyaltyRedemptionService.cs" />
-    <Compile Include="Business\LoyaltyRedemptionService.cs" />
-    <Compile Include="Data\Entities\Invoice.cs" />
-    <Compile Include="Data\ILoyaltyDataService.cs" />
-    <Compile Include="Business\LoyaltyAccrualService.cs" />
-    <Compile Include="Business\ILoyaltyAccrualService.cs" />
-    <Compile Include="Data\Entities\Customer.cs" />
-    <Compile Include="Data\Entities\Size.cs" />
-    <Compile Include="Data\Entities\Vehicule.cs" />
-    <Compile Include="Data\FakeLoyaltyDataService.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\Entities\RentalAgreement.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AOP_Tests\AOP_Tests.csproj">
+      <Project>{a87d8160-6568-4541-8c26-0f3feffb1de0}</Project>
+      <Name>AOP_Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

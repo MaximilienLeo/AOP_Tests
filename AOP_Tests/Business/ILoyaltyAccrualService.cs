@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AOP_Tests.Data.Entities;
 
 namespace AOP_Tests {
-    interface ILoyaltyAccrualService {
+    public interface ILoyaltyAccrualService {
         void Accrue(RentalAgreement agreement);
     }
 }
