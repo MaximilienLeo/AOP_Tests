@@ -11,6 +11,18 @@ namespace AOP_Tests.Business {
         }
 
         public void Redeem(Invoice invoice, int numberOfDays) {
+            // Add Defensive Programming
+            if (invoice == null) {
+                throw new ArgumentNullException(nameof(invoice));
+            }
+
+            if (numberOfDays <= 0) {
+                throw new ArgumentException(nameof(numberOfDays));
+            }
+
+
+
+
             // Add Logging
             Console.WriteLine($"Redeem : {DateTime.Now}");
             Console.WriteLine($"Invoice: {invoice.Id}");

@@ -11,6 +11,11 @@ namespace AOP_Tests.Business {
         }
 
         public void Accrue(RentalAgreement agreement) {
+            // Add Defensive Programming
+            if (agreement == null) {
+                throw new ArgumentNullException(nameof(agreement));
+            }
+
             // Add Logging
             Console.WriteLine($"Accrue : {DateTime.Now}");
             Console.WriteLine($"Customer: {agreement.Customer.Id}");
