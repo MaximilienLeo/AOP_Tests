@@ -25,41 +25,48 @@ namespace AOP_Tests.Business {
             Console.WriteLine($"Redeem : {DateTime.Now}");
             Console.WriteLine($"Invoice: {invoice.Id}");
 
-            // Add Transaction
-            using (var scope = new TransactionScope()) {
-                // Add Retry logic
-                var retries = 3;
-                var succeded = false;
-                while (!succeded) {
+            // Add More exception Handling
+            try {
+                // Add Transaction
+                using (var scope = new TransactionScope()) {
+                    // Add Retry logic
+                    var retries = 3;
+                    var succeded = false;
+                    while (!succeded) {
 
-                    try {
-                        // Business logic
-                        var pointsPerDay = 10;
-                        if (invoice.Vehicule.Size >= Size.Luxury) {
-                            pointsPerDay = 15;
-                        }
+                        try {
+                            // Business logic
+                            var pointsPerDay = 10;
+                            if (invoice.Vehicule.Size >= Size.Luxury) {
+                                pointsPerDay = 15;
+                            }
 
-                        var points = numberOfDays * pointsPerDay;
-                        _loyaltyDataService.SubtractPoints(invoice.Customer.Id, points);
-                        invoice.Discount = numberOfDays * invoice.CostPerDay;
-                        // Business logic
+                            var points = numberOfDays * pointsPerDay;
+                            _loyaltyDataService.SubtractPoints(invoice.Customer.Id, points);
+                            invoice.Discount = numberOfDays * invoice.CostPerDay;
+                            // Business logic
 
-                        // Complete transaction
-                        scope.Complete();
-                        succeded = true;
+                            // Complete transaction
+                            scope.Complete();
+                            succeded = true;
 
-                        // Add Logging
-                        Console.WriteLine($"Redeem complete: {DateTime.Now}");
+                            // Add Logging
+                            Console.WriteLine($"Redeem complete: {DateTime.Now}");
 
-                    } catch {
-                        // Don't rethrow until the limit is reached
-                        if (retries >= 0) {
-                            retries--;
-                        } else {
-                            throw;
+                        } catch {
+                            // Don't rethrow until the limit is reached
+                            if (retries >= 0) {
+                                retries--;
+                            } else {
+                                throw;
+                            }
                         }
                     }
                 }
+            } catch (Exception ex) {
+                // Some exception handling logic. The Book code doesn't work, Something missing?
+                //if (!ExceptionHandler.Handle(ex))
+                //    throw;
             }
         }
     }

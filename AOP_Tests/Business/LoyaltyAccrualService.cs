@@ -22,44 +22,51 @@ namespace AOP_Tests.Business {
             Console.WriteLine($"Customer: {agreement.Customer.Id}");
             Console.WriteLine($"Vehicule: {agreement.Vehicule.Id}");
 
-            // Add Transaction
-            using (var scope = new TransactionScope()) {
-                // Add Retry logic
-                var retries = 3;
-                var succeded = false;
-                while (!succeded) {
+            // Add More exception Handling
+            try {
+                // Add Transaction
+                using (var scope = new TransactionScope()) {
+                    // Add Retry logic
+                    var retries = 3;
+                    var succeded = false;
+                    while (!succeded) {
 
-                    try {
+                        try {
 
-                        // Business logic
-                        var rentalTimeSpan = agreement.EndDate.Subtract(agreement.StartDate);
-                        var numberOfDays = (int)Math.Floor(rentalTimeSpan.TotalDays);
-                        var pointsPerDay = 1;
+                            // Business logic
+                            var rentalTimeSpan = agreement.EndDate.Subtract(agreement.StartDate);
+                            var numberOfDays = (int)Math.Floor(rentalTimeSpan.TotalDays);
+                            var pointsPerDay = 1;
 
-                        if (agreement.Vehicule.Size >= Size.Luxury) {
-                            pointsPerDay = 2;
-                        }
+                            if (agreement.Vehicule.Size >= Size.Luxury) {
+                                pointsPerDay = 2;
+                            }
 
-                        var points = numberOfDays * pointsPerDay;
-                        _loyaltyDataService.AddPoints(agreement.Customer.Id, points);
-                        // Business logic
+                            var points = numberOfDays * pointsPerDay;
+                            _loyaltyDataService.AddPoints(agreement.Customer.Id, points);
+                            // Business logic
 
-                        // Complete transaction
-                        scope.Complete();
-                        succeded = true;
+                            // Complete transaction
+                            scope.Complete();
+                            succeded = true;
 
-                        // Add Logging
-                        Console.WriteLine($"Accrue complete: {DateTime.Now}");
+                            // Add Logging
+                            Console.WriteLine($"Accrue complete: {DateTime.Now}");
 
-                    } catch {
-                        // Don't rethrow until the limit is reached
-                        if (retries >= 0) {
-                            retries--;
-                        } else {
-                            throw;
+                        } catch {
+                            // Don't rethrow until the limit is reached
+                            if (retries >= 0) {
+                                retries--;
+                            } else {
+                                throw;
+                            }
                         }
                     }
                 }
+            } catch (Exception ex) {
+                // Some exception handling logic. The Book code doesn't work. Something missing?
+                //if (!ExceptionHandler.Handle(ex))
+                //    throw;
             }
         }
     }
