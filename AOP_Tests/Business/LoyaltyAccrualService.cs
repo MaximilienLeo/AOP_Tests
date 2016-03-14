@@ -24,25 +24,43 @@ namespace AOP_Tests.Business {
 
             // Add Transaction
             using (var scope = new TransactionScope()) {
-                try {
-                    var rentalTimeSpan = agreement.EndDate.Subtract(agreement.StartDate);
-                    var numberOfDays = (int)Math.Floor(rentalTimeSpan.TotalDays);
-                    var pointsPerDay = 1;
+                // Add Retry logic
+                var retries = 3;
+                var succeded = false;
+                while (!succeded) {
 
-                    if (agreement.Vehicule.Size >= Size.Luxury) {
-                        pointsPerDay = 2;
+                    try {
+
+                        // Business logic
+                        var rentalTimeSpan = agreement.EndDate.Subtract(agreement.StartDate);
+                        var numberOfDays = (int)Math.Floor(rentalTimeSpan.TotalDays);
+                        var pointsPerDay = 1;
+
+                        if (agreement.Vehicule.Size >= Size.Luxury) {
+                            pointsPerDay = 2;
+                        }
+
+                        var points = numberOfDays * pointsPerDay;
+                        _loyaltyDataService.AddPoints(agreement.Customer.Id, points);
+                        // Business logic
+
+                        // Complete transaction
+                        scope.Complete();
+                        succeded = true;
+
+                        // Add Logging
+                        Console.WriteLine($"Accrue complete: {DateTime.Now}");
+
+                    } catch {
+                        // Don't rethrow until the limit is reached
+                        if (retries >= 0) {
+                            retries--;
+                        } else {
+                            throw;
+                        }
                     }
-
-                    var points = numberOfDays * pointsPerDay;
-                    _loyaltyDataService.AddPoints(agreement.Customer.Id, points);
-                    scope.Complete();
-                } catch {
-                    throw;
                 }
             }
-
-            // Add Logging
-            Console.WriteLine($"Accrue complete: {DateTime.Now}");
         }
     }
 }

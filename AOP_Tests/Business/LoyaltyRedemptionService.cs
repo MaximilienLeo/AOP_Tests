@@ -27,23 +27,40 @@ namespace AOP_Tests.Business {
 
             // Add Transaction
             using (var scope = new TransactionScope()) {
-                try {
-                    var pointsPerDay = 10;
-                    if (invoice.Vehicule.Size >= Size.Luxury) {
-                        pointsPerDay = 15;
-                    }
+                // Add Retry logic
+                var retries = 3;
+                var succeded = false;
+                while (!succeded) {
 
-                    var points = numberOfDays * pointsPerDay;
-                    _loyaltyDataService.SubtractPoints(invoice.Customer.Id, points);
-                    invoice.Discount = numberOfDays * invoice.CostPerDay;
-                    scope.Complete();
-                } catch {
-                    throw;
+                    try {
+                        // Business logic
+                        var pointsPerDay = 10;
+                        if (invoice.Vehicule.Size >= Size.Luxury) {
+                            pointsPerDay = 15;
+                        }
+
+                        var points = numberOfDays * pointsPerDay;
+                        _loyaltyDataService.SubtractPoints(invoice.Customer.Id, points);
+                        invoice.Discount = numberOfDays * invoice.CostPerDay;
+                        // Business logic
+
+                        // Complete transaction
+                        scope.Complete();
+                        succeded = true;
+
+                        // Add Logging
+                        Console.WriteLine($"Redeem complete: {DateTime.Now}");
+
+                    } catch {
+                        // Don't rethrow until the limit is reached
+                        if (retries >= 0) {
+                            retries--;
+                        } else {
+                            throw;
+                        }
+                    }
                 }
             }
-
-            // Add Logging
-            Console.WriteLine($"Redeem complete: {DateTime.Now}");
         }
     }
 }
