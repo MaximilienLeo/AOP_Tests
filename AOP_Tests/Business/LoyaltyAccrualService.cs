@@ -9,8 +9,13 @@ namespace AOP_Tests.Business {
         public LoyaltyAccrualService(ILoyaltyDataService service) {
             _loyaltyDataService = service;
         }
-     
+
         public void Accrue(RentalAgreement agreement) {
+            // Add Logging
+            Console.WriteLine($"Accrue : {DateTime.Now}");
+            Console.WriteLine($"Customer: {agreement.Customer.Id}");
+            Console.WriteLine($"Vehicule: {agreement.Vehicule.Id}");
+
             var rentalTimeSpan = agreement.EndDate.Subtract(agreement.StartDate);
             var numberOfDays = (int)Math.Floor(rentalTimeSpan.TotalDays);
             var pointsPerDay = 1;
@@ -21,6 +26,10 @@ namespace AOP_Tests.Business {
 
             var points = numberOfDays * pointsPerDay;
             _loyaltyDataService.AddPoints(agreement.Customer.Id, points);
+
+
+            // Add Logging
+            Console.WriteLine($"Accrue complete: {DateTime.Now}");
         }
     }
 }
