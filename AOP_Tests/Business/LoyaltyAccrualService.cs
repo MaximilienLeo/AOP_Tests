@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Transactions;
 using AOP_Tests.Data;
 using AOP_Tests.Data.Entities;
 
@@ -21,17 +22,24 @@ namespace AOP_Tests.Business {
             Console.WriteLine($"Customer: {agreement.Customer.Id}");
             Console.WriteLine($"Vehicule: {agreement.Vehicule.Id}");
 
-            var rentalTimeSpan = agreement.EndDate.Subtract(agreement.StartDate);
-            var numberOfDays = (int)Math.Floor(rentalTimeSpan.TotalDays);
-            var pointsPerDay = 1;
+            // Add Transaction
+            using (var scope = new TransactionScope()) {
+                try {
+                    var rentalTimeSpan = agreement.EndDate.Subtract(agreement.StartDate);
+                    var numberOfDays = (int)Math.Floor(rentalTimeSpan.TotalDays);
+                    var pointsPerDay = 1;
 
-            if (agreement.Vehicule.Size >= Size.Luxury) {
-                pointsPerDay = 2;
+                    if (agreement.Vehicule.Size >= Size.Luxury) {
+                        pointsPerDay = 2;
+                    }
+
+                    var points = numberOfDays * pointsPerDay;
+                    _loyaltyDataService.AddPoints(agreement.Customer.Id, points);
+                    scope.Complete();
+                } catch {
+                    throw;
+                }
             }
-
-            var points = numberOfDays * pointsPerDay;
-            _loyaltyDataService.AddPoints(agreement.Customer.Id, points);
-
 
             // Add Logging
             Console.WriteLine($"Accrue complete: {DateTime.Now}");

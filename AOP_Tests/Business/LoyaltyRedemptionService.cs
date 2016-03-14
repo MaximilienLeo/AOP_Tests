@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Transactions;
 using AOP_Tests.Data;
 using AOP_Tests.Data.Entities;
 
@@ -20,21 +21,26 @@ namespace AOP_Tests.Business {
                 throw new ArgumentException(nameof(numberOfDays));
             }
 
-
-
-
             // Add Logging
             Console.WriteLine($"Redeem : {DateTime.Now}");
             Console.WriteLine($"Invoice: {invoice.Id}");
 
-            var pointsPerDay = 10;
-            if (invoice.Vehicule.Size >= Size.Luxury) {
-                pointsPerDay = 15;
-            }
+            // Add Transaction
+            using (var scope = new TransactionScope()) {
+                try {
+                    var pointsPerDay = 10;
+                    if (invoice.Vehicule.Size >= Size.Luxury) {
+                        pointsPerDay = 15;
+                    }
 
-            var points = numberOfDays * pointsPerDay;
-            _loyaltyDataService.SubtractPoints(invoice.Customer.Id, points);
-            invoice.Discount = numberOfDays * invoice.CostPerDay;
+                    var points = numberOfDays * pointsPerDay;
+                    _loyaltyDataService.SubtractPoints(invoice.Customer.Id, points);
+                    invoice.Discount = numberOfDays * invoice.CostPerDay;
+                    scope.Complete();
+                } catch {
+                    throw;
+                }
+            }
 
             // Add Logging
             Console.WriteLine($"Redeem complete: {DateTime.Now}");
