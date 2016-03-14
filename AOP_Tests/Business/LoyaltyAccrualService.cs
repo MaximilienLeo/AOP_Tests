@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Transactions;
 using AOP_Tests.Data;
-using AOP_Tests.Data.Entities;
+using AOP_Tests.Data.Entities; 
 
 namespace AOP_Tests.Business {
     public class LoyaltyAccrualService : ILoyaltyAccrualService {
